@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 1071580225}
   - component: {fileID: 1071580224}
   m_Layer: 0
-  m_Name: CardGenerator
+  m_Name: CardManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,6 +372,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_numberCardToCreate: 5
+  m_isUseForceHand: 1
+  m_forceHand:
+  - Suit: 0
+    Kind: 0
+  - Suit: 1
+    Kind: 0
+  - Suit: 0
+    Kind: 1
+  - Suit: 2
+    Kind: 0
+  - Suit: 1
+    Kind: 1
   m_pivotArray:
   - {fileID: 4123686556193740730}
   - {fileID: 2943661033230514389}
@@ -379,6 +391,9 @@ MonoBehaviour:
   - {fileID: 786345999278703598}
   - {fileID: 7901891000397500632}
   m_cardPrefab: {fileID: 4244149445952487555, guid: 0ac7cda9c08078449b6731e063248094, type: 3}
+  m_suitCardSelectedList: 
+  m_kindCardSelectedList: 
+  m_cardCounterArr: []
 --- !u!4 &1071580225
 Transform:
   m_ObjectHideFlags: 0

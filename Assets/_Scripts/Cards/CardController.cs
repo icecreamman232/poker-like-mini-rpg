@@ -1,9 +1,12 @@
+using System;
+using DG.Tweening;
 using UnityEngine;
 
 namespace JustGame.Script.Card
 {
     public enum CardSuit
     {
+        None =-1,
         Heart,
         Diamond,
         Spade,
@@ -12,6 +15,7 @@ namespace JustGame.Script.Card
 
     public enum CardKind
     {
+        None =-1,
         Aces,
         Kind_2,
         Kind_3,
@@ -29,12 +33,18 @@ namespace JustGame.Script.Card
     
     public class CardController : MonoBehaviour
     {
+        [SerializeField] private int m_index;
         [SerializeField] private CardSuit m_suit;
         [SerializeField] private CardKind m_kind;
         [SerializeField] private CardView m_cardView;
 
-        public void Create(CardValue value)
+        private bool m_isSelected;
+
+        public Action<int, bool, CardSuit, CardKind> OnSelectCard;
+        
+        public void Create(int index ,CardValue value)
         {
+            m_index = index;
             m_suit = value.Suit;
             m_kind = value.Kind;
         }
@@ -42,6 +52,15 @@ namespace JustGame.Script.Card
         public void Show()
         {
             m_cardView.SetView(m_suit, m_kind);
+        }
+
+        private void OnMouseDown()
+        {
+            m_isSelected = !m_isSelected;
+            var curPosY = transform.position.y;
+            transform.DOLocalMoveY(curPosY + (m_isSelected ? 1:-1), 0.3f).SetUpdate(true);
+            
+            OnSelectCard?.Invoke(m_index,m_isSelected,m_suit,m_kind);
         }
     }
 }
