@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JustGame.Script.Card;
+using JustGame.Scripts.Attribute;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -40,12 +41,35 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Transform[] m_pivotArray;
     [SerializeField] private CardController m_cardPrefab;
 
-    [SerializeField]private List<CardSuit> m_suitCardSelectedList;
-    [SerializeField]private List<CardKind> m_kindCardSelectedList;
-    [SerializeField]private CardCounter[] m_cardCounterArr;
+    [SerializeField][ReadOnly] private List<CardSuit> m_suitCardSelectedList;
+    [SerializeField][ReadOnly] private List<CardKind> m_kindCardSelectedList;
+    [SerializeField][ReadOnly] private CardCounter[] m_cardCounterArr;
+    [SerializeField] [ReadOnly] private List<GameObject> m_listCardGO;
+    
+    public void FightCurrentHand()
+    {
+        if (CheckHands() != PokerHands.No_hands)
+        {
+            for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+            {
+                if (m_kindCardSelectedList[i] != CardKind.None)
+                {
+                    m_kindCardSelectedList[i] = CardKind.None;
+                    m_suitCardSelectedList[i] = CardSuit.None;
+                    Destroy(m_listCardGO[i]);
+                    m_listCardGO[i] = null;
+                }
+            }
+            
+            CreateNewCards();
+        }
+    }
+    
     
     private void Start()
     {
+        m_listCardGO = new List<GameObject>();
+        
         if (m_isUseForceHand)
         {
             for (int i = 0; i < m_numberCardToCreate; i++)
@@ -54,6 +78,7 @@ public class CardManager : MonoBehaviour
                 card.Create(i,m_forceHand[i]);
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
+                m_listCardGO.Add(card.gameObject);
             }
         }
         else
@@ -64,9 +89,10 @@ public class CardManager : MonoBehaviour
                 card.Create(i,GetRandomCardValue());
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
+                m_listCardGO.Add(card.gameObject);
             }
         }
-
+        
         m_cardCounterArr = new CardCounter[13];
 
         for (int i = 0; i < 13; i++)
@@ -94,6 +120,24 @@ public class CardManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             CheckHandAndPrintDebug();
+        }
+    }
+    
+    /// <summary>
+    /// Generate new cards that go to empty slot of the hands
+    /// </summary>
+    private void CreateNewCards()
+    {
+        for (int i = 0; i < m_listCardGO.Count; i++)
+        {
+            if (m_listCardGO[i] == null)
+            {
+                var card = Instantiate(m_cardPrefab, m_pivotArray[i].position,Quaternion.identity);
+                card.Create(i,GetRandomCardValue());
+                card.Show();
+                card.OnSelectCard += OnSelectCard;
+                m_listCardGO[i] = card.gameObject;
+            }
         }
     }
 
@@ -152,9 +196,9 @@ public class CardManager : MonoBehaviour
         }
 
         return true;
-    }
+    } //Check
 
-    private bool IsStraightFlush()
+    private bool IsStraightFlush() //Check
     {
         //Check if it's RoyalFlush
         if (m_kindCardSelectedList[0] == CardKind.Aces)
@@ -190,10 +234,10 @@ public class CardManager : MonoBehaviour
             }
         }
         
-        return false;
+        return true;
     }
 
-    private bool IsFourOfAKindHand()
+    private bool IsFourOfAKindHand() //Check
     {
         CardKind isSameKind = m_kindCardSelectedList[0];
         var numberSameKind = 1;
@@ -220,7 +264,7 @@ public class CardManager : MonoBehaviour
         return false;
     }
 
-    private bool IsFullHouseHand()
+    private bool IsFullHouseHand() //Check
     {
         ResetCounterArray();
         
@@ -254,10 +298,154 @@ public class CardManager : MonoBehaviour
         
         return false;
     }
-    
 
-    private bool IsTwoPair()
+
+    private bool IsFlushHand() //Check
     {
+        for (int i = 0; i < m_suitCardSelectedList.Count - 1; i++)
+        {
+            if (m_suitCardSelectedList[i] == CardSuit.None)
+            {
+                return false;
+            }
+
+            if (m_suitCardSelectedList[i] != m_suitCardSelectedList[i + 1])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    private bool IsStraightHand() //Check
+    {
+        for (int i = 0; i < m_kindCardSelectedList.Count - 1; i++)
+        {
+            if (m_kindCardSelectedList[i] == CardKind.None)
+            {
+                return false;
+            }
+
+            if ((int)(m_kindCardSelectedList[i] + 1) != (int)m_kindCardSelectedList[i + 1])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    private bool IsThreeKindHand() //Check
+    {
+        ResetCounterArray();
+        
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if(m_kindCardSelectedList[i] == CardKind.None) continue;
+            m_cardCounterArr[(int)m_kindCardSelectedList[i]].Amount++;
+        }
+
+        bool potentialHasThreeKind = false;
+        
+        for (int i = 0; i < m_cardCounterArr.Length; i++)
+        {
+            if (m_cardCounterArr[i].Amount == 3)
+            {
+                potentialHasThreeKind = true;
+            }
+        }
+
+        if (potentialHasThreeKind)
+        {
+            var numberSelectedCard = 0;
+            for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+            {
+                if (m_kindCardSelectedList[i] != CardKind.None)
+                {
+                    numberSelectedCard++;
+                }
+            }
+
+            if (numberSelectedCard > 3)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    private bool IsTwoPair() //Check
+    {
+        ResetCounterArray();
+        
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if(m_kindCardSelectedList[i] == CardKind.None) continue;
+            m_cardCounterArr[(int)m_kindCardSelectedList[i]].Amount++;
+        }
+
+        int pairNumber = 0;
+        
+        for (int i = 0; i < m_cardCounterArr.Length; i++)
+        {
+            if (m_cardCounterArr[i].Amount == 2)
+            {
+                pairNumber++;
+            }
+        }
+
+        bool potentialHasPair = pairNumber >= 2;
+        
+
+        if (potentialHasPair)
+        {
+            var numberSelectedCard = 0;
+            for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+            {
+                if (m_kindCardSelectedList[i] != CardKind.None)
+                {
+                    numberSelectedCard++;
+                }
+            }
+
+            if (numberSelectedCard > 4)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        
+        
+        return false;
+    }
+
+    private bool IsPair() //Check
+    {
+        ResetCounterArray();
+        
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if(m_kindCardSelectedList[i] == CardKind.None) continue;
+            m_cardCounterArr[(int)m_kindCardSelectedList[i]].Amount++;
+        }
+        
+        for (int i = 0; i < m_cardCounterArr.Length; i++)
+        {
+            if (m_cardCounterArr[i].Amount == 2)
+            {
+                return true;
+            }
+        }
         
         return false;
     }
@@ -291,13 +479,30 @@ public class CardManager : MonoBehaviour
         {
             return PokerHands.Full_House;
         }
-        
-        
-        
+
+        if (IsFlushHand())
+        {
+            return PokerHands.Flush;
+        }
+
+        if (IsStraightHand())
+        {
+            return PokerHands.Straight;
+        }
+
+        if (IsThreeKindHand())
+        {
+            return PokerHands.Three_A_Kind;
+        }
         
         if (IsTwoPair())
         {
             return PokerHands.Two_Pair;
+        }
+
+        if (IsPair())
+        {
+            return PokerHands.Pair;
         }
         
         return PokerHands.No_hands;
