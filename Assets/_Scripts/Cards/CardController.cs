@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 namespace JustGame.Script.Card
@@ -37,6 +38,8 @@ namespace JustGame.Script.Card
         [SerializeField] private CardSuit m_suit;
         [SerializeField] private CardKind m_kind;
         [SerializeField] private CardView m_cardView;
+        [Header("UI")] 
+        [SerializeField] private TextMeshProUGUI m_scoreText;
 
         private bool m_isSelected;
 
@@ -47,11 +50,25 @@ namespace JustGame.Script.Card
             m_index = index;
             m_suit = value.Suit;
             m_kind = value.Kind;
+
+            m_scoreText.text = "";
         }
         
         public void Show()
         {
             m_cardView.SetView(m_suit, m_kind);
+        }
+
+        public void ShowScore()
+        {
+            //transform.DOShakeRotation(0.3f, 50, 30, 45, randomnessMode: ShakeRandomnessMode.Harmonic);
+            transform.DOScale(1.15f, 0.15f).SetEase(Ease.OutExpo).SetLoops(2, LoopType.Yoyo);
+            m_scoreText.text = GetScore().ToString();
+        }
+
+        private int GetScore()
+        {
+            return (int)m_kind + 1;
         }
 
 

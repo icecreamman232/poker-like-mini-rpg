@@ -45,9 +45,10 @@ public class CardManager : MonoBehaviour
     [SerializeField][ReadOnly] private List<CardSuit> m_suitCardSelectedList;
     [SerializeField][ReadOnly] private List<CardKind> m_kindCardSelectedList;
     [SerializeField][ReadOnly] private CardCounter[] m_cardCounterArr;
-    [SerializeField] [ReadOnly] private List<GameObject> m_listCardGO;
+    [SerializeField] [ReadOnly] private List<CardController> m_listCardGO;
 
     private bool m_isFightingCard;
+    private bool m_isDiscarding;
     
     public void FightCurrentHand()
     {
@@ -68,6 +69,17 @@ public class CardManager : MonoBehaviour
         }
 
         m_isFightingCard = true;
+
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if (m_kindCardSelectedList[i] != CardKind.None)
+            {
+                m_listCardGO[i].ShowScore();
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
+        
         
         //Destroy selected hand
         for (int i = 0; i < m_kindCardSelectedList.Count; i++)
@@ -76,7 +88,7 @@ public class CardManager : MonoBehaviour
             {
                 m_kindCardSelectedList[i] = CardKind.None;
                 m_suitCardSelectedList[i] = CardSuit.None;
-                Destroy(m_listCardGO[i]);
+                Destroy(m_listCardGO[i].gameObject);
                 m_listCardGO[i] = null;
                 yield return new WaitForSeconds(0.1f);
             }
@@ -87,11 +99,43 @@ public class CardManager : MonoBehaviour
         m_isFightingCard = false;
 
     }
-    
+
+
+    public void DiscardSelectedCards()
+    {
+        StartCoroutine(DiscardRoutine());
+    }
+
+    private IEnumerator DiscardRoutine()
+    {
+        if (m_isDiscarding)
+        {
+            yield break;
+        }
+
+        m_isDiscarding = true;
+        
+        //Destroy selected hand
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if (m_kindCardSelectedList[i] != CardKind.None)
+            {
+                m_kindCardSelectedList[i] = CardKind.None;
+                m_suitCardSelectedList[i] = CardSuit.None;
+                Destroy(m_listCardGO[i].gameObject);
+                m_listCardGO[i] = null;
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        
+        CreateNewCards();
+        
+        m_isDiscarding = false;
+    }
     
     private void Start()
     {
-        m_listCardGO = new List<GameObject>();
+        m_listCardGO = new List<CardController>();
         
         if (m_isUseForceHand)
         {
@@ -101,7 +145,7 @@ public class CardManager : MonoBehaviour
                 card.Create(i,m_forceHand[i]);
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
-                m_listCardGO.Add(card.gameObject);
+                m_listCardGO.Add(card);
             }
         }
         else
@@ -112,7 +156,7 @@ public class CardManager : MonoBehaviour
                 card.Create(i,GetRandomCardValue());
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
-                m_listCardGO.Add(card.gameObject);
+                m_listCardGO.Add(card);
             }
         }
         
@@ -159,7 +203,7 @@ public class CardManager : MonoBehaviour
                 card.Create(i,GetRandomCardValue());
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
-                m_listCardGO[i] = card.gameObject;
+                m_listCardGO[i] = card;
             }
         }
     }
