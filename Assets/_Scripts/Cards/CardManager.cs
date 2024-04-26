@@ -65,6 +65,14 @@ public class CardManager : MonoBehaviour
         
         if (CheckHands() == PokerHands.No_hands)
         {
+            for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+            {
+                if (m_kindCardSelectedList[i] != CardKind.None)
+                {
+                    m_listCardGO[i].ReturnCard();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
             yield break;
         }
 

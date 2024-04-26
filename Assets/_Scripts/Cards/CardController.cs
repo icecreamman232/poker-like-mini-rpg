@@ -61,7 +61,6 @@ namespace JustGame.Script.Card
 
         public void ShowScore()
         {
-            //transform.DOShakeRotation(0.3f, 50, 30, 45, randomnessMode: ShakeRandomnessMode.Harmonic);
             transform.DOScale(1.15f, 0.15f).SetEase(Ease.OutExpo).SetLoops(2, LoopType.Yoyo);
             m_scoreText.text = GetScore().ToString();
         }
@@ -76,13 +75,24 @@ namespace JustGame.Script.Card
         {
             if (Input.GetMouseButtonDown(1) && m_isSelected)
             {
-                m_isSelected = false;
-                
-                var curPosY = transform.position.y;
-                transform.DOLocalMoveY(curPosY + (m_isSelected ? 1:-1), 0.3f).SetUpdate(true);
-            
-                OnSelectCard?.Invoke(m_index,m_isSelected,m_suit,m_kind);
+                DeselectCard();
             }
+        }
+
+        private void DeselectCard()
+        {
+            m_isSelected = false;
+                            
+            var curPosY = transform.position.y;
+            transform.DOLocalMoveY(curPosY + (m_isSelected ? 1:-1), 0.3f).SetUpdate(true);
+        
+            OnSelectCard?.Invoke(m_index,m_isSelected,m_suit,m_kind);
+        }
+
+        public void ReturnCard()
+        {
+            transform.DOShakeRotation(0.3f, 50, 30, 45, randomnessMode: ShakeRandomnessMode.Harmonic).
+                OnComplete(DeselectCard);
         }
 
         private void OnMouseDown()
