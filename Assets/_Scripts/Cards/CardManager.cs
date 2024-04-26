@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JustGame.Script.Card;
 using JustGame.Scripts.Attribute;
 using UnityEngine;
@@ -31,7 +32,7 @@ public enum PokerHands
     Three_A_Kind,
     Two_Pair,
     Pair,
-    No_hands,
+    High_Card,
 }
 
 public class CardManager : MonoBehaviour
@@ -61,32 +62,44 @@ public class CardManager : MonoBehaviour
         {
             yield break;
         }
-        
-        
-        if (CheckHands() == PokerHands.No_hands)
+
+        var hands = CheckHands();
+        // if (CheckHands() == PokerHands.High_Card)
+        // {
+        //     for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        //     {
+        //         if (m_kindCardSelectedList[i] != CardKind.None)
+        //         {
+        //             m_listCardGO[i].ReturnCard();
+        //             yield return new WaitForSeconds(0.1f);
+        //         }
+        //     }
+        //     yield break;
+        // }
+
+        m_isFightingCard = true;
+
+        if (hands == PokerHands.High_Card)
+        {
+            var highCardIndex = FindBiggestRank();
+            //Show score on first card of high card hands
+            m_listCardGO[highCardIndex].ShowScore();
+            yield return new WaitForSeconds(0.1f);
+        }
+        else
         {
             for (int i = 0; i < m_kindCardSelectedList.Count; i++)
             {
                 if (m_kindCardSelectedList[i] != CardKind.None)
                 {
-                    m_listCardGO[i].ReturnCard();
-                    yield return new WaitForSeconds(0.1f);
+                    m_listCardGO[i].ShowScore();
                 }
+
+                yield return new WaitForSeconds(0.1f);
             }
-            yield break;
         }
-
-        m_isFightingCard = true;
-
-        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
-        {
-            if (m_kindCardSelectedList[i] != CardKind.None)
-            {
-                m_listCardGO[i].ShowScore();
-            }
-
-            yield return new WaitForSeconds(0.1f);
-        }
+        
+       
         
         
         //Destroy selected hand
@@ -525,6 +538,21 @@ public class CardManager : MonoBehaviour
         return false;
     }
 
+    private int FindBiggestRank()
+    {
+        var curRank = CardKind.None;
+        var result = 0;
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if ((int)m_kindCardSelectedList[i] > (int)curRank)
+            {
+                curRank = m_kindCardSelectedList[i];
+                result = i;
+            }
+        }
+        return result;
+    }
+
     private void ResetCounterArray()
     {
         for (int i = 0; i < m_cardCounterArr.Length; i++)
@@ -580,7 +608,7 @@ public class CardManager : MonoBehaviour
             return PokerHands.Pair;
         }
         
-        return PokerHands.No_hands;
+        return PokerHands.High_Card;
     }
     
     //private 

@@ -17,7 +17,6 @@ namespace JustGame.Script.Card
     public enum CardKind
     {
         None =-1,
-        Aces,
         Kind_2,
         Kind_3,
         Kind_4,
@@ -30,6 +29,7 @@ namespace JustGame.Script.Card
         Kind_J,
         Kind_Q,
         Kind_K,
+        Aces
     }
     
     public class CardController : MonoBehaviour
@@ -67,7 +67,26 @@ namespace JustGame.Script.Card
 
         private int GetScore()
         {
-            return (int)m_kind + 1;
+            switch (m_kind)
+            {
+                case CardKind.Kind_2:
+                case CardKind.Kind_3:
+                case CardKind.Kind_4:
+                case CardKind.Kind_5:
+                case CardKind.Kind_6:
+                case CardKind.Kind_7:
+                case CardKind.Kind_8:
+                case CardKind.Kind_9:
+                case CardKind.Kind_10:
+                    return (int)m_kind + 2;
+                case CardKind.Kind_J:
+                case CardKind.Kind_Q:
+                case CardKind.Kind_K:
+                    return 10;
+                case CardKind.Aces:
+                    return 12;
+            }
+            return -1;
         }
 
 
