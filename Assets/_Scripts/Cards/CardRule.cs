@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using JustGame.Scripts.Attribute;
 using UnityEngine;
@@ -11,16 +10,23 @@ namespace JustGame.Script.Card
     public class CardRule : MonoBehaviour
     {
         [SerializeField][ReadOnly] private CardCounter[] m_cardCounterArr;
+        
+        //This list will store index of valid hand cards, exclude selected cards that are not in winning hand
+        [SerializeField] [ReadOnly] private List<int> m_indexListOfWinningHand;
 
+        public List<int> IndexListOfWinningHand => m_indexListOfWinningHand;
+        
         private void Awake()
         {
             m_cardCounterArr = new CardCounter[13];
 
             for (int i = 0; i < 13; i++)
             {
-                m_cardCounterArr[i].Kind = (CardRank)i;
+                m_cardCounterArr[i].Rank = (CardRank)i;
                 m_cardCounterArr[i].Amount = 0;
             }
+
+            m_indexListOfWinningHand = new List<int>();
         }
 
         public PokerHands CheckHand(List<CardValue> selectedCardList)
@@ -147,26 +153,27 @@ namespace JustGame.Script.Card
 
         private bool IsFourOfAKindHand(List<CardValue> selectedCardList) //Check
         {
-            CardRank isSameKind = selectedCardList[0].Rank;
-            var numberSameKind = 1;
+            ResetCounterArray();
             
-            for (int i = 1; i < selectedCardList.Count; i++)
+            for (int i = 0; i < selectedCardList.Count; i++)
             {
                 if(selectedCardList[i].Rank == CardRank.None) continue;
-                if (selectedCardList[i].Rank == isSameKind)
-                {
-                    numberSameKind++;
-                }
-                else
-                {
-                    isSameKind = selectedCardList[i].Rank;
-                    numberSameKind = 1;
-                }
+                m_cardCounterArr[(int)selectedCardList[i].Rank].Amount++;
             }
-            
-            if (numberSameKind == 4)
+
+            for (int i = 0; i < m_cardCounterArr.Length; i++)
             {
-                return true;
+                if (m_cardCounterArr[i].Amount == 4)
+                {
+                    for (int j = 0; j < selectedCardList.Count; j++)
+                    {
+                        if (selectedCardList[j].Rank == m_cardCounterArr[i].Rank)
+                        {
+                            m_indexListOfWinningHand.Add(j);
+                        }
+                    }
+                    return true;
+                }
             }
             
             return false;
@@ -253,33 +260,21 @@ namespace JustGame.Script.Card
                 m_cardCounterArr[(int)selectedCardList[i].Rank].Amount++;
             }
 
-            bool potentialHasThreeKind = false;
-            
+          
             for (int i = 0; i < m_cardCounterArr.Length; i++)
             {
                 if (m_cardCounterArr[i].Amount == 3)
                 {
-                    potentialHasThreeKind = true;
-                }
-            }
+                    ResetIndexList();
 
-            if (potentialHasThreeKind)
-            {
-                var numberSelectedCard = 0;
-                for (int i = 0; i < selectedCardList.Count; i++)
-                {
-                    if (selectedCardList[i].Rank != CardRank.None)
+                    for (int j = 0; j < selectedCardList.Count; j++)
                     {
-                        numberSelectedCard++;
+                        if (selectedCardList[j].Rank == m_cardCounterArr[i].Rank)
+                        {
+                            m_indexListOfWinningHand.Add(j);
+                        }
                     }
-                }
-
-                if (numberSelectedCard > 3)
-                {
-                    return false;
-                }
-                else
-                {
+                    
                     return true;
                 }
             }
@@ -291,6 +286,7 @@ namespace JustGame.Script.Card
         private bool IsTwoPair(List<CardValue>  selectedCardList) //Check
         {
             ResetCounterArray();
+            ResetIndexList();
             
             for (int i = 0; i < selectedCardList.Count; i++)
             {
@@ -299,46 +295,30 @@ namespace JustGame.Script.Card
             }
 
             int pairNumber = 0;
-            
+       
             for (int i = 0; i < m_cardCounterArr.Length; i++)
             {
                 if (m_cardCounterArr[i].Amount == 2)
                 {
+                    for (int j = 0; j < selectedCardList.Count; j++)
+                    {
+                        if (selectedCardList[j].Rank == m_cardCounterArr[i].Rank)
+                        {
+                            m_indexListOfWinningHand.Add(j);
+                        }
+                    }
+                    
                     pairNumber++;
                 }
             }
 
-            bool potentialHasPair = pairNumber >= 2;
-            
-
-            if (potentialHasPair)
-            {
-                var numberSelectedCard = 0;
-                for (int i = 0; i < selectedCardList.Count; i++)
-                {
-                    if (selectedCardList[i].Rank != CardRank.None)
-                    {
-                        numberSelectedCard++;
-                    }
-                }
-
-                if (numberSelectedCard > 4)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            
-            
-            return false;
+            return pairNumber == 2;
         }
 
         private bool IsPair(List<CardValue>  selectedCardList) //Check
         {
             ResetCounterArray();
+            ResetIndexList();
             for (int i = 0; i < selectedCardList.Count; i++)
             {
                 if(selectedCardList[i].Rank == CardRank.None) continue;
@@ -349,6 +329,13 @@ namespace JustGame.Script.Card
             {
                 if (m_cardCounterArr[i].Amount == 2)
                 {
+                    for (int j = 0; j < selectedCardList.Count; j++)
+                    {
+                        if (selectedCardList[j].Rank == m_cardCounterArr[i].Rank)
+                        {
+                            m_indexListOfWinningHand.Add(j);
+                        }
+                    }
                     return true;
                 }
             }
@@ -364,6 +351,11 @@ namespace JustGame.Script.Card
             {
                 m_cardCounterArr[i].Amount = 0;
             }
+        }
+
+        private void ResetIndexList()
+        {
+            m_indexListOfWinningHand.Clear();
         }
     }
 }

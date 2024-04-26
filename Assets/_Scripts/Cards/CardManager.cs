@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using JustGame.Script.Card;
 using JustGame.Scripts.Attribute;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -16,7 +17,7 @@ public class CardValue
 [Serializable]
 public struct CardCounter
 {
-    public CardRank Kind;
+    public CardRank Rank;
     public int Amount;
 }
 
@@ -64,6 +65,8 @@ public class CardManager : MonoBehaviour
         
         var hands = m_cardRule.CheckHand(m_selectedCardList);
         
+        Debug.Log($"HANDS:<color=orange> {hands.ToString()}</color>");
+        
         m_isFightingCard = true;
 
         if (hands == PokerHands.High_Card)
@@ -75,18 +78,13 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < m_selectedCardList.Count; i++)
+            //Only show score on card that belongs to winning hands, flops wont be shown
+            for (int i = 0; i < m_cardRule.IndexListOfWinningHand.Count; i++)
             {
-                if (m_selectedCardList[i].Rank != CardRank.None)
-                {
-                    m_listCardGO[i].ShowScore();
-                }
-
+                m_listCardGO[m_cardRule.IndexListOfWinningHand[i]].ShowScore();
                 yield return new WaitForSeconds(0.1f);
             }
         }
-        
-       
         
         
         //Destroy selected hand
