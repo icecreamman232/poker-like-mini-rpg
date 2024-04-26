@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using JustGame.Script.Card;
 using JustGame.Scripts.Attribute;
@@ -45,24 +46,46 @@ public class CardManager : MonoBehaviour
     [SerializeField][ReadOnly] private List<CardKind> m_kindCardSelectedList;
     [SerializeField][ReadOnly] private CardCounter[] m_cardCounterArr;
     [SerializeField] [ReadOnly] private List<GameObject> m_listCardGO;
+
+    private bool m_isFightingCard;
     
     public void FightCurrentHand()
     {
-        if (CheckHands() != PokerHands.No_hands)
+        StartCoroutine(FightRoutine());
+    }
+
+    private IEnumerator FightRoutine()
+    {
+        if (m_isFightingCard)
         {
-            for (int i = 0; i < m_kindCardSelectedList.Count; i++)
-            {
-                if (m_kindCardSelectedList[i] != CardKind.None)
-                {
-                    m_kindCardSelectedList[i] = CardKind.None;
-                    m_suitCardSelectedList[i] = CardSuit.None;
-                    Destroy(m_listCardGO[i]);
-                    m_listCardGO[i] = null;
-                }
-            }
-            
-            CreateNewCards();
+            yield break;
         }
+        
+        
+        if (CheckHands() == PokerHands.No_hands)
+        {
+            yield break;
+        }
+
+        m_isFightingCard = true;
+        
+        //Destroy selected hand
+        for (int i = 0; i < m_kindCardSelectedList.Count; i++)
+        {
+            if (m_kindCardSelectedList[i] != CardKind.None)
+            {
+                m_kindCardSelectedList[i] = CardKind.None;
+                m_suitCardSelectedList[i] = CardSuit.None;
+                Destroy(m_listCardGO[i]);
+                m_listCardGO[i] = null;
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        
+        CreateNewCards();
+
+        m_isFightingCard = false;
+
     }
     
     

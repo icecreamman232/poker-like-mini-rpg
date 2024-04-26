@@ -54,9 +54,27 @@ namespace JustGame.Script.Card
             m_cardView.SetView(m_suit, m_kind);
         }
 
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(1) && m_isSelected)
+            {
+                m_isSelected = false;
+                
+                var curPosY = transform.position.y;
+                transform.DOLocalMoveY(curPosY + (m_isSelected ? 1:-1), 0.3f).SetUpdate(true);
+            
+                OnSelectCard?.Invoke(m_index,m_isSelected,m_suit,m_kind);
+            }
+        }
+
         private void OnMouseDown()
         {
-            m_isSelected = !m_isSelected;
+            if (Input.GetMouseButtonDown(0))
+            {
+                m_isSelected = !m_isSelected;
+            }
+            
             var curPosY = transform.position.y;
             transform.DOLocalMoveY(curPosY + (m_isSelected ? 1:-1), 0.3f).SetUpdate(true);
             
