@@ -14,7 +14,7 @@ namespace JustGame.Script.Card
         Clubs,
     }
 
-    public enum CardKind
+    public enum CardRank
     {
         None =-1,
         Kind_2,
@@ -36,20 +36,20 @@ namespace JustGame.Script.Card
     {
         [SerializeField] private int m_index;
         [SerializeField] private CardSuit m_suit;
-        [SerializeField] private CardKind m_kind;
+        [SerializeField] private CardRank m_kind;
         [SerializeField] private CardView m_cardView;
         [Header("UI")] 
         [SerializeField] private TextMeshProUGUI m_scoreText;
 
         private bool m_isSelected;
 
-        public Action<int, bool, CardSuit, CardKind> OnSelectCard;
+        public Action<int, bool, CardSuit, CardRank> OnSelectCard;
         
         public void Create(int index ,CardValue value)
         {
             m_index = index;
             m_suit = value.Suit;
-            m_kind = value.Kind;
+            m_kind = value.Rank;
 
             m_scoreText.text = "";
         }
@@ -69,21 +69,21 @@ namespace JustGame.Script.Card
         {
             switch (m_kind)
             {
-                case CardKind.Kind_2:
-                case CardKind.Kind_3:
-                case CardKind.Kind_4:
-                case CardKind.Kind_5:
-                case CardKind.Kind_6:
-                case CardKind.Kind_7:
-                case CardKind.Kind_8:
-                case CardKind.Kind_9:
-                case CardKind.Kind_10:
+                case CardRank.Kind_2:
+                case CardRank.Kind_3:
+                case CardRank.Kind_4:
+                case CardRank.Kind_5:
+                case CardRank.Kind_6:
+                case CardRank.Kind_7:
+                case CardRank.Kind_8:
+                case CardRank.Kind_9:
+                case CardRank.Kind_10:
                     return (int)m_kind + 2;
-                case CardKind.Kind_J:
-                case CardKind.Kind_Q:
-                case CardKind.Kind_K:
+                case CardRank.Kind_J:
+                case CardRank.Kind_Q:
+                case CardRank.Kind_K:
                     return 10;
-                case CardKind.Aces:
+                case CardRank.Aces:
                     return 12;
             }
             return -1;

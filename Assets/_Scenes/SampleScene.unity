@@ -821,6 +821,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1071580225}
   - component: {fileID: 1071580224}
+  - component: {fileID: 1071580226}
   m_Layer: 0
   m_Name: CardManager
   m_TagString: Untagged
@@ -842,17 +843,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_numberCardToCreate: 5
   m_isUseForceHand: 1
+  m_cardRule: {fileID: 1071580226}
   m_forceHand:
   - Suit: 0
-    Kind: 2
+    Rank: 0
   - Suit: 1
-    Kind: 2
+    Rank: 0
   - Suit: 2
-    Kind: 12
+    Rank: 0
   - Suit: 0
-    Kind: 3
+    Rank: 0
   - Suit: 1
-    Kind: 3
+    Rank: 0
   m_pivotArray:
   - {fileID: 4123686556193740730}
   - {fileID: 2943661033230514389}
@@ -860,8 +862,7 @@ MonoBehaviour:
   - {fileID: 786345999278703598}
   - {fileID: 7901891000397500632}
   m_cardPrefab: {fileID: 4244149445952487555, guid: 0ac7cda9c08078449b6731e063248094, type: 3}
-  m_suitCardSelectedList: 
-  m_kindCardSelectedList: 
+  m_selectedCardList: []
   m_cardCounterArr: []
   m_listCardGO: []
 --- !u!4 &1071580225
@@ -884,6 +885,18 @@ Transform:
   - {fileID: 7901891000397500632}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1071580226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071580223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b068abd1d8091324ba454e745ae57c85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1189867486
 GameObject:
   m_ObjectHideFlags: 0

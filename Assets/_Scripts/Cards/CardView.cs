@@ -11,7 +11,7 @@ namespace JustGame.Script.Card
         [SerializeField] private Color m_redColor;
         [SerializeField] private Color m_blackColor;
 
-        public void SetView(CardSuit suit, CardKind kind)
+        public void SetView(CardSuit suit, CardRank kind)
         {
             m_suitSprite.sprite = m_spriteContainer.GetSuitSprite(suit);
             m_kindUpSprite.sprite = m_spriteContainer.GetKindSprite(kind);

@@ -13,7 +13,7 @@ namespace JustGame.Script.Data
             return m_sprites[(int)suit];
         }
 
-        public Sprite GetKindSprite(CardKind kind)
+        public Sprite GetKindSprite(CardRank kind)
         {
             return m_sprites[(int)kind + 4];
         }
