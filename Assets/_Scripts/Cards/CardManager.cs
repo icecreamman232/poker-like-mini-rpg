@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using JustGame.Script.Card;
 using JustGame.Scripts.Attribute;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -43,7 +42,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private CardValue[] m_forceHand;
     [SerializeField] private Transform[] m_pivotArray;
     [SerializeField] private CardController m_cardPrefab;
-    
+
+    [SerializeField] private List<CardValue> m_deck;
     [SerializeField] [ReadOnly] private List<CardValue> m_selectedCardList;
     [SerializeField] [ReadOnly] private List<CardController> m_listCardGO;
 
@@ -141,6 +141,39 @@ public class CardManager : MonoBehaviour
     
     private void Start()
     {
+        //Create deck
+        m_deck = new List<CardValue>();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 13; j++)
+            {
+                m_deck.Add(new CardValue()
+                {
+                    Suit= (CardSuit)i,
+                    Rank = (CardRank)j
+                });
+            }
+        }
+        
+        //Shuffle deck
+        for (int i = 0; i < m_deck.Count; i++)
+        {
+            CardValue temp = new CardValue();
+            temp.Rank = m_deck[i].Rank;
+            temp.Suit = m_deck[i].Suit;
+            
+            int randomIndex = Random.Range(i, m_deck.Count);
+            
+            m_deck[i].Rank = m_deck[randomIndex].Rank;
+            m_deck[i].Suit = m_deck[randomIndex].Suit;
+            
+            m_deck[randomIndex].Rank = temp.Rank;
+            m_deck[randomIndex].Suit = temp.Suit;
+        }
+        
+        
+        
+        
         m_listCardGO = new List<CardController>();
         
         if (m_isUseForceHand)
@@ -159,11 +192,12 @@ public class CardManager : MonoBehaviour
             for (int i = 0; i < m_numberCardToCreate; i++)
             {
                 var card = Instantiate(m_cardPrefab, m_pivotArray[i].position,Quaternion.identity);
-                card.Create(i,GetRandomCardValue());
+                card.Create(i,m_deck[i]);
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
                 m_listCardGO.Add(card);
             }
+            m_deck.RemoveRange(0,m_numberCardToCreate);
         }
 
         m_selectedCardList = new List<CardValue>();
@@ -184,17 +218,20 @@ public class CardManager : MonoBehaviour
     /// </summary>
     private void CreateNewCards()
     {
+        var numberBeCreated = 0;
         for (int i = 0; i < m_listCardGO.Count; i++)
         {
             if (m_listCardGO[i] == null)
             {
                 var card = Instantiate(m_cardPrefab, m_pivotArray[i].position,Quaternion.identity);
-                card.Create(i,GetRandomCardValue());
+                card.Create(i,m_deck[i]);
                 card.Show();
                 card.OnSelectCard += OnSelectCard;
                 m_listCardGO[i] = card;
+                numberBeCreated++;
             }
         }
+        m_deck.RemoveRange(0,numberBeCreated);
     }
 
 

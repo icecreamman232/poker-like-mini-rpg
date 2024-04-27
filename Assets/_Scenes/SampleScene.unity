@@ -846,15 +846,15 @@ MonoBehaviour:
   m_cardRule: {fileID: 1071580226}
   m_forceHand:
   - Suit: 0
-    Rank: 0
+    Rank: 2
   - Suit: 1
-    Rank: 0
+    Rank: 2
+  - Suit: 1
+    Rank: 5
   - Suit: 2
-    Rank: 0
-  - Suit: 0
-    Rank: 0
-  - Suit: 1
-    Rank: 0
+    Rank: 4
+  - Suit: 3
+    Rank: 4
   m_pivotArray:
   - {fileID: 4123686556193740730}
   - {fileID: 2943661033230514389}
@@ -863,7 +863,6 @@ MonoBehaviour:
   - {fileID: 7901891000397500632}
   m_cardPrefab: {fileID: 4244149445952487555, guid: 0ac7cda9c08078449b6731e063248094, type: 3}
   m_selectedCardList: []
-  m_cardCounterArr: []
   m_listCardGO: []
 --- !u!4 &1071580225
 Transform:
@@ -897,6 +896,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b068abd1d8091324ba454e745ae57c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cardCounterArr: []
+  m_indexListOfWinningHand: 
 --- !u!1 &1189867486
 GameObject:
   m_ObjectHideFlags: 0
