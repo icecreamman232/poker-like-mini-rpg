@@ -39,6 +39,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private int m_numberCardToCreate;
     [SerializeField] private bool m_isUseForceHand;
     [SerializeField] private CardRule m_cardRule;
+    [SerializeField] private CardScoreController m_scoreController;
     [SerializeField] private CardValue[] m_forceHand;
     [SerializeField] private Transform[] m_pivotArray;
     [SerializeField] private CardController m_cardPrefab;
@@ -84,7 +85,12 @@ public class CardManager : MonoBehaviour
                 m_listCardGO[m_cardRule.IndexListOfWinningHand[i]].ShowScore();
                 yield return new WaitForSeconds(0.1f);
             }
+            
         }
+        
+        //Calculate score
+        m_scoreController.CalculateScore(m_selectedCardList, m_cardRule.IndexListOfWinningHand);
+        
         
         
         //Destroy selected hand
