@@ -61,7 +61,11 @@ namespace JustGame.Script.Card
 
         public void ShowScore()
         {
-            transform.DOScale(1.15f, 0.15f).SetEase(Ease.OutExpo).SetLoops(2, LoopType.Yoyo);
+            transform.DOScale(1.15f, 0.15f).SetEase(Ease.OutExpo).SetLoops(2, LoopType.Yoyo)
+                .OnComplete(() =>
+                {
+                    m_scoreText.text = string.Empty;
+                });
             m_scoreText.text = GetScore().ToString();
         }
 

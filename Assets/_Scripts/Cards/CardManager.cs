@@ -75,7 +75,7 @@ public class CardManager : MonoBehaviour
             var highCardIndex = FindBiggestRank();
             //Show score on first card of high card hands
             m_listCardGO[highCardIndex].ShowScore();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.15f);
         }
         else
         {
@@ -83,16 +83,16 @@ public class CardManager : MonoBehaviour
             for (int i = 0; i < m_cardRule.IndexListOfWinningHand.Count; i++)
             {
                 m_listCardGO[m_cardRule.IndexListOfWinningHand[i]].ShowScore();
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.15f);
             }
             
         }
         
         //Calculate score
         m_scoreController.CalculateScore(m_selectedCardList, m_cardRule.IndexListOfWinningHand);
-        
-        
-        
+
+        yield return new WaitForSeconds(0.5f);
+            
         //Destroy selected hand
         for (int i = 0; i < m_selectedCardList.Count; i++)
         {
@@ -208,7 +208,7 @@ public class CardManager : MonoBehaviour
 
         m_selectedCardList = new List<CardValue>();
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < m_numberCardToCreate; i++)
         {
             m_selectedCardList.Add(new CardValue()
             {
@@ -238,15 +238,6 @@ public class CardManager : MonoBehaviour
             }
         }
         m_deck.RemoveRange(0,numberBeCreated);
-    }
-
-
-    private CardValue GetRandomCardValue()
-    {
-        var newCard = new CardValue();
-        newCard.Suit = (CardSuit)Random.Range(0, 4);
-        newCard.Rank = (CardRank)Random.Range(0, 13);
-        return newCard;
     }
 
     private void OnSelectCard(int index,bool isSelected, CardSuit suit, CardRank rank)
