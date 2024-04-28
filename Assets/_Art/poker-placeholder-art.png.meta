@@ -113,10 +113,10 @@ TextureImporter:
       name: card-body
       rect:
         serializedVersion: 2
-        x: 28
-        y: 83
-        width: 300
-        height: 450
+        x: 22
+        y: 74
+        width: 318
+        height: 468
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

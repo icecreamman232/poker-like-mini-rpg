@@ -126,7 +126,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.5005599, y: 2.25}
+    oldSize: {x: 1.5905933, y: 2.34}
     newSize: {x: 3.0011199, y: 4.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -148,10 +148,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_spriteContainer: {fileID: 11400000, guid: 1cf31a6a6fad82746983e4b4dee7a407, type: 2}
+  m_cardBodySprite: {fileID: 6081777398562929772}
   m_suitSprite: {fileID: 1169297644040728735}
   m_kindUpSprite: {fileID: 4340794355310750529}
   m_redColor: {r: 1, g: 0, b: 0, a: 1}
   m_blackColor: {r: 0.25882354, g: 0.25882354, b: 0.25882354, a: 1}
+  m_rotateSpeed: 10
+  m_maxAngle: 5
 --- !u!114 &4244149445952487555
 MonoBehaviour:
   m_ObjectHideFlags: 0
