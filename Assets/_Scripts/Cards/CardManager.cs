@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using JustGame.Script.Card;
 using JustGame.Scripts.Attribute;
+using JustGame.Scripts.ScriptableEvent;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -36,20 +37,26 @@ public enum PokerHands
 
 public class CardManager : MonoBehaviour
 {
+    [SerializeField] private int m_maxTurns;
     [SerializeField] private int m_numberCardToCreate;
     [SerializeField] private bool m_isUseForceHand;
     [SerializeField] private CardRule m_cardRule;
     [SerializeField] private CardScoreController m_scoreController;
+    [SerializeField] private IntEvent m_turnUpdateEvent;
+    [SerializeField] [ReadOnly] private int m_curTurn;
+    [Header("Spawn")]
     [SerializeField] private CardValue[] m_forceHand;
     [SerializeField] private Transform[] m_pivotArray;
     [SerializeField] private CardController m_cardPrefab;
-
-    [SerializeField] private List<CardValue> m_deck;
+    
+    [Header("Deck")]
+    [SerializeField] private List<CardValue> m_deck;    
     [SerializeField] [ReadOnly] private List<CardValue> m_selectedCardList;
     [SerializeField] [ReadOnly] private List<CardController> m_listCardGO;
 
     private bool m_isFightingCard;
     private bool m_isDiscarding;
+    
     
     public void FightCurrentHand()
     {
@@ -61,6 +68,14 @@ public class CardManager : MonoBehaviour
         if (m_isFightingCard)
         {
             yield break;
+        }
+
+        m_curTurn--;
+        m_turnUpdateEvent.Raise(m_curTurn);
+        
+        if (m_curTurn <= 0)
+        {
+            //TODO:No turn left, player is lost
         }
 
         
@@ -147,6 +162,9 @@ public class CardManager : MonoBehaviour
     
     private void Start()
     {
+        m_curTurn = m_maxTurns;
+        m_turnUpdateEvent.Raise(m_curTurn);
+        
         //Create deck
         m_deck = new List<CardValue>();
         for (int i = 0; i < 4; i++)
