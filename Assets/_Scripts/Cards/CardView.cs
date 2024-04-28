@@ -59,12 +59,15 @@ namespace JustGame.Script.Card
         {
             if (!m_isIdle) return;
             
-            transform.rotation = Quaternion.AngleAxis(m_angle, Vector3.forward);
             m_angle += m_rotateSpeed * Time.deltaTime * (m_isRotateToRight ? 1: -1);
             if (Mathf.Abs(m_angle) >= m_maxAngle)
             {
+                m_angle = (m_isRotateToRight ? 1 : -1) * m_maxAngle;
                 m_isRotateToRight = !m_isRotateToRight;
             }
+            
+            transform.rotation = Quaternion.AngleAxis(m_angle, Vector3.forward);
+            
         }
     }
 }
